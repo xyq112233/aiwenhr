@@ -55,7 +55,10 @@ export default {
           { min: 2, max: 10, message: '部门编码长度为2-10个字符', trigger: 'blur' },
           {
             validator: async(rule, value, callback) => {
-              const res = await getDepartment()
+              let res = await getDepartment()
+              if (this.formData.id) {
+                res = res.filter(item => item.id !== this.formData.id)
+              }
               if (res.some(item => item.code === value)) {
                 callback(new Error('部门编码已存在'))
               } else {
@@ -71,7 +74,10 @@ export default {
           { min: 2, max: 10, message: '部门名称长度为2-10个字符', trigger: 'blur' },
           {
             validator: async(rule, value, callback) => {
-              const res = await getDepartment()
+              let res = await getDepartment()
+              if (this.formData.id) {
+                res = res.filter(item => item.id !== this.formData.id)
+              }
               if (res.some(item => item.name === value)) {
                 callback(new Error('部门名称已存在'))
               } else {
