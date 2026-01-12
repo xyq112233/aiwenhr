@@ -28,6 +28,7 @@
 </template>
 <script>
 import { getDepartment } from '@/api/department'
+import { transListToTreeData } from '@/utils/index'
 export default {
   name: 'Department',
   data() {
@@ -45,7 +46,7 @@ export default {
   methods: {
     async getDepartment() {
       const res = await getDepartment()
-      this.depts = res
+      this.depts = transListToTreeData(res, 0)
     }
   }
 }
@@ -58,6 +59,6 @@ export default {
 .tree-manger{
   width: 50px;
   display: inline-block;
-  margin: 10px;
+  margin: 32px;
 }
 </style>
