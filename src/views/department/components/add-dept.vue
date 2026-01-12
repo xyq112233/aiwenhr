@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="新增部门" :visible="showDialog" @close="close">
-    <el-form label-width="120px" :model="formData" :rules="rules">
+    <el-form ref="addDept" label-width="120px" :model="formData" :rules="rules">
       <el-form-item prop="name" label="部门名称">
         <el-input v-model="formData.name" placeholder="2-10个字符" style="width: 80%;" size="mini" />
       </el-form-item>
@@ -13,13 +13,13 @@
         </el-select>
       </el-form-item>
       <el-form-item prop="introduce" label="部门介绍">
-        <el-input v-model="formData.introduce" placeholder="1-100个字符" :rows="4" style="width: 80%;" size="mini" />
+        <el-input v-model="formData.introduce" placeholder="1-100个字符" type="textarea" :rows="4" style="width: 80%;" size="mini" />
       </el-form-item>
       <el-form-item>
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button type="primary" size="mini">确认</el-button>
-            <el-button size="mini">取消</el-button>
+            <el-button type="primary" size="mini" @click="btnOk">确认</el-button>
+            <el-button size="mini" @click="close">取消</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -27,8 +27,7 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartment } from '@/api/department'
-import { getManagerList } from '@/api/department'
+import { addDepartment, getDepartment, getManagerList, getDepartmentDetail } from '@/api/department'
 
 export default {
   props: {
@@ -89,12 +88,28 @@ export default {
   },
   methods: {
     close() {
+      this.$refs.addDept.resetFields()
       this.$emit('update:showDialog', false)
     },
     async getMangerList() {
       const res = await getManagerList()
       this.managerList = res
+    },
+    btnOk() {
+      this.$refs.addDept.validate(async isOk => {
+        if (isOk) {
+          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          this.$emit('updateDepartment')
+          this.$message.success('新增部门成功')
+          this.close()
+        }
+      })
+    },
+    async getDepartmentDetail() {
+      const res = await getDepartmentDetail(this.currentNodeId)
+      this.formData = res
     }
+
   }
 }
 </script>
