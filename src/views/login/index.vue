@@ -5,6 +5,7 @@
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
+        <!-- el-form > el-form-item > el-input -->
         <el-form ref="form" :model="loginForm" :rules="loginRules">
           <el-form-item prop="mobile">
             <el-input v-model="loginForm.mobile" placeholder="请输入手机号" />
@@ -41,9 +42,10 @@ export default {
           message: '请输入手机号',
           trigger: 'blur'
         }, {
-          pattern: /^1[3456789]\d{9}$/,
-          message: '手机号格式不对',
+          pattern: /^1[3-9]\d{9}$/,
+          message: '手机号格式不正确',
           trigger: 'blur'
+
         }],
         password: [{
           required: true,
@@ -52,12 +54,18 @@ export default {
         }, {
           min: 6,
           max: 16,
-          message: '密码长度必须在6-16位之间',
+          message: '密码长度应该为6-16位之间',
           trigger: 'blur'
+
         }],
+        // required只能检测 null undefined ""
         isAgree: [{
           validator: (rule, value, callback) => {
-            value ? callback() : callback(new Error('请同意用户平台使用协议'))
+            // rule校验规则
+            // value 校验的值
+            // callback 函数 - promise resolve reject
+            // callback() callback(new Error(错误信息))
+            value ? callback() : callback(new Error('您必须勾选用户的使用协议'))
           }
         }]
       }
@@ -65,14 +73,16 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.form.validate(async(isOk) => {
-        if (isOk) {
-          // alert('校验成功')
+      this.$refs.form.validate(async(isOK) => {
+        if (isOK) {
           await this.$store.dispatch('user/login', this.loginForm)
+          // Vuex 中的action 返回的promise
+          // 跳转主页
           this.$router.push('/')
         }
       })
     }
+
   }
 }
 </script>
