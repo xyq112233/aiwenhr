@@ -7,17 +7,36 @@
       </div>
       <!-- 放置table组件 -->
       <el-table :data="roleList">
-        <el-table-column prop="name" align="center" label="角色" width="200" />
-        <el-table-column prop="state" align="center" label="启用" width="200">
+        <el-table-column prop="name" align="center" label="角色" width="200">
           <template v-slot="{ row }">
-            <span>{{ row.state === 1 ? '已启用' : row.state === 0 ? '已停用' : '' }}</span>
+            <el-input v-if="row.isEdit" size="mini" />
+            <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="description" align="center" label="描述" />
+        <el-table-column prop="state" align="center" label="启用" width="200">
+          <template v-slot="{ row }">
+            <el-switch v-if="row.isEdit" />
+            <span v-else>{{ row.state === 1 ? '已启用' : row.state === 0 ? '已停用' : '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" align="center" label="描述">
+          <template v-slot="{ row }">
+            <el-input v-if="row.isEdit" type="textarea" />
+            <span v-else>{{ row.description }}</span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="操作">
-          <el-button size="mini" type="text">权限分配</el-button>
-          <el-button size="mini" type="text">编辑</el-button>
-          <el-button size="mini" type="text">删除</el-button>
+          <template v-slot="{row}">
+            <template v-if="row.isEdit">
+              <el-button type="primary" size="mini">确定</el-button>
+              <el-button size="mini" @click="btnCancel(row)">取消</el-button>
+            </template>
+            <template v-else>
+              <el-button size="mini" type="text">权限分配</el-button>
+              <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
+              <el-button size="mini" type="text">删除</el-button>
+            </template>
+          </template>
         </el-table-column>
       </el-table>
       <!-- 放置分页组件 -->
@@ -92,6 +111,10 @@ export default {
       const { rows, total } = await getRoleList(this.pageParams)
       this.roleList = rows
       this.pageParams.total = total
+      this.roleList.forEach(item => {
+        // item.isEdit = false // 添加一个属性
+        this.$set(item, 'isEdit', false)
+      })
     },
     // 分页切换时调用
     changePage(newPage) {
@@ -112,6 +135,9 @@ export default {
     btnCancel() {
       this.$refs.roleForm.resetFields()
       this.showDialog = false
+    },
+    btnEditRow(row) {
+      row.isEdit = true
     }
   }
 }
