@@ -53,7 +53,10 @@
         <el-row type="flex" justify="end" align="middle" style="height: 60px">
           <el-pagination
             layout="total,prev, pager, next"
-            :total="1000"
+            :total="total"
+            :current-page="queryParams.page"
+            :page-size="queryParams.pagesize"
+            @current-change="changePage"
           />
         </el-row>
       </div>
@@ -76,9 +79,12 @@ export default {
       },
       // 储存查询参数
       queryParams: {
-        departmentId: null
+        departmentId: null,
+        page: 1,
+        pagesize: 10
       },
-      list: []
+      total: 0, // 员工总数
+      list: []// 储存员工列表
     }
   },
   created() {
@@ -99,12 +105,19 @@ export default {
     selectNode(node) {
       // console.log(node)
       this.queryParams.departmentId = node.id
+      this.queryParams.page = 1
       this.getEmployeeList()
     },
     async getEmployeeList() {
-      const { rows } = await getEmployeeList(this.queryParams)
+      const { rows, total } = await getEmployeeList(this.queryParams)
       // console.log(row)
       this.list = rows
+      this.total = total
+    },
+    changePage(newPage) {
+      // alert(newPage)
+      this.queryParams.page = newPage
+      this.getEmployeeList()
     }
   }
 }
