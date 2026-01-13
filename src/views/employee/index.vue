@@ -26,7 +26,7 @@
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
-          <el-button size="mini">excel导入</el-button>
+          <el-button size="mini" @click="showExcelDialog = true">excel导入</el-button>
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -69,6 +69,8 @@
         </el-row>
       </div>
     </div>
+    <!-- 导入excel组件 -->
+    <import-excel :show-excel-dialog.sync="showExcelDialog" />
   </div>
 </template>
 
@@ -76,9 +78,13 @@
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils/index'
 import { getEmployeeList, exportEmployee } from '@/api/employee'
+import ImportExcel from './components/import-excel.vue'
 import FileSaver from 'file-saver'
 export default {
   name: 'Employee',
+  components: {
+    ImportExcel
+  },
   data() {
     return {
       depts: [],
@@ -94,7 +100,8 @@ export default {
         keyword: ''
       },
       total: 0, // 员工总数
-      list: []// 储存员工列表
+      list: [], // 储存员工列表
+      showExcelDialog: false
     }
   },
   created() {
