@@ -9,19 +9,19 @@
       <el-table :data="roleList">
         <el-table-column prop="name" align="center" label="角色" width="200">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" size="mini" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.name" size="mini" />
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="state" align="center" label="启用" width="200">
           <template v-slot="{ row }">
-            <el-switch v-if="row.isEdit" />
+            <el-switch v-if="row.isEdit" v-model="row.editRow.state" :active-value="1" :inactive-value="0" />
             <span v-else>{{ row.state === 1 ? '已启用' : row.state === 0 ? '已停用' : '' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="description" align="center" label="描述">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" type="textarea" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" style="width: 300px;" />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
@@ -114,6 +114,11 @@ export default {
       this.roleList.forEach(item => {
         // item.isEdit = false // 添加一个属性
         this.$set(item, 'isEdit', false)
+        this.$set(item, 'editRow', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        })
       })
     },
     // 分页切换时调用
@@ -138,6 +143,9 @@ export default {
     },
     btnEditRow(row) {
       row.isEdit = true
+      row.editRow.name = row.name
+      row.editRow.state = row.state
+      row.editRow.description = row.description
     }
   }
 }
