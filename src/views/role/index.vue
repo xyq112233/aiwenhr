@@ -22,7 +22,13 @@
       </el-table>
       <!-- 放置分页组件 -->
       <el-row type="flex" style="height: 60px;" align="middle" justify="end">
-        <el-pagination layout="prev, pager, next" />
+        <el-pagination
+          :page-size="pageParams.pagesize"
+          :current-page.sync="pageParams.page"
+          :total="pageParams.total"
+          layout="prev, pager, next"
+          @current-change="changePage"
+        />
       </el-row>
     </div>
   </div>
@@ -33,7 +39,13 @@ export default {
   name: 'Role',
   data() {
     return {
-      roleList: []
+      roleList: [],
+      // 将分页信息放置在一个对象中
+      pageParams: {
+        page: 1,
+        pagesize: 5,
+        total: 0
+      }
     }
   },
   created() {
@@ -41,8 +53,14 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const { rows } = await getRoleList()
+      const { rows, total } = await getRoleList(this.pageParams)
       this.roleList = rows
+      this.pageParams.total = total
+    },
+    // 分页切换时调用
+    changePage(newPage) {
+      this.pageParams.page = newPage
+      this.getRoleList()
     }
   }
 }
