@@ -21,3 +21,11 @@ export function getExportTemplate() {
     responseType: 'blob'
   })
 }
+// 导入员工excel
+export function importEmployee(data) {
+  return request({
+    url: '/sys/user/import',
+    method: 'post',
+    data
+  })
+}

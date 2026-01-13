@@ -12,12 +12,13 @@
           class="excel-upload-input"
           type="file"
           accept=".xlsx, .xls"
+          @change="uploadChange"
         >
         <div class="drop">
           <i class="el-icon-upload" />
           <el-button type="text" @click="getTemplate">下载导入模板</el-button>
           <span>将文件拖到此处或
-            <el-button type="text">点击上传</el-button>
+            <el-button type="text" @click="handlUpload">点击上传</el-button>
           </span>
         </div>
       </div>
@@ -29,7 +30,7 @@
   </el-dialog>
 </template>
 <script>
-import { getExportTemplate } from '@/api/employee'
+import { getExportTemplate, importEmployee } from '@/api/employee'
 import FileSaver from 'file-saver'
 export default {
   props: {
@@ -43,6 +44,29 @@ export default {
       const res = await getExportTemplate()
       // console.log(res)
       FileSaver.saveAs(res, '员工导入模板.xlsx')
+    },
+    handlUpload() {
+      this.$refs['excel-upload-input'].click()
+    },
+    async uploadChange(e) {
+      console.log(e.target.files)
+      const files = e.target.files
+      if (files.length > 0) {
+        const data = new FormData()
+        data.append('file', files[0])
+        try {
+          await importEmployee(data)
+          this.$emit('update:showExcelDialog', false)
+          this.$emit('uploadSuccess')
+          // this.$refs['excel-upload-input'].value = ''
+        } catch (error) {
+          // 捕获失败
+          // this.$refs['excel-upload-input'].value = ''
+        } finally {
+          // 无论成功失败，都会执行finally中的代码
+          this.$refs['excel-upload-input'].value = ''
+        }
+      }
     }
   }
 }
