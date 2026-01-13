@@ -4,7 +4,7 @@ import { Message } from 'element-ui'
 import router from '@/router'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 10000
+  timeout: 20000
 })
 
 // 添加请求拦截器
@@ -23,6 +23,7 @@ service.interceptors.request.use(function(config) {
 service.interceptors.response.use(function(response) {
   // 2xx 范围内的状态码都会触发该函数。
   // 对响应数据做点什么
+  if (response.data instanceof Blob) return response.data
   const { data, message, success } = response.data
   if (success) {
     return data
@@ -33,7 +34,7 @@ service.interceptors.response.use(function(response) {
 }, async function(error) {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     Message({ type: 'warning', message: 'token过期，请重新登录' })
     await store.dispatch('user/logout')
     router.push('/login')
