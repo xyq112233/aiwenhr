@@ -22,14 +22,25 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
-        <el-table>
-          <el-table-column align="center" label="头像" />
-          <el-table-column label="姓名" />
-          <el-table-column label="手机号" sortable />
-          <el-table-column label="工号" sortable />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间" sortable />
+        <el-table :data="list">
+          <el-table-column prop="staffPhoto" align="center" label="头像">
+            <template v-slot="{row}">
+              <el-avatar v-if="row.staffPhoto" :src="row.staffPhoto" :size="30" />
+              <span v-else class="username">{{ row.username.charAt(2) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="username" label="姓名" />
+          <el-table-column prop="mobile" label="手机号" sortable />
+          <el-table-column prop="workNumber" label="工号" sortable />
+          <el-table-column prop="formOfEmployment" label="聘用形式">
+            <template v-slot="{row}">
+              <span v-if="row.formOfEmployment === 1">正式</span>
+              <span v-else-if="row.formOfEmployment === 2">非正式</span>
+              <span v-else>未知</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="departmentName" label="部门" />
+          <el-table-column prop="timeOfEntry" label="入职时间" sortable />
           <el-table-column label="操作">
             <template>
               <el-button size="mini" type="text">查看</el-button>
@@ -53,6 +64,7 @@
 <script>
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils/index'
+import { getEmployeeList } from '@/api/employee'
 export default {
   name: 'Employee',
   data() {
@@ -65,7 +77,8 @@ export default {
       // 储存查询参数
       queryParams: {
         departmentId: null
-      }
+      },
+      list: []
     }
   },
   created() {
@@ -81,10 +94,17 @@ export default {
       this.$nextTick(() => {
         this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
       })
+      this.getEmployeeList()
     },
     selectNode(node) {
       // console.log(node)
       this.queryParams.departmentId = node.id
+      this.getEmployeeList()
+    },
+    async getEmployeeList() {
+      const { rows } = await getEmployeeList(this.queryParams)
+      // console.log(row)
+      this.list = rows
     }
   }
 }
