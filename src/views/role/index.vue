@@ -21,15 +21,15 @@
         </el-table-column>
         <el-table-column prop="description" align="center" label="描述">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" style="width: 300px;" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template v-slot="{row}">
             <template v-if="row.isEdit">
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini" @click="btnCancel(row)">取消</el-button>
+              <el-button type="primary" size="mini" @click="btnEditOk(row)">确定</el-button>
+              <el-button size="mini" @click="row.isEdit = false">取消</el-button>
             </template>
             <template v-else>
               <el-button size="mini" type="text">权限分配</el-button>
@@ -75,7 +75,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, addRole } from '@/api/role'
+import { getRoleList, addRole, updateRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -146,6 +146,19 @@ export default {
       row.editRow.name = row.name
       row.editRow.state = row.state
       row.editRow.description = row.description
+    },
+    async btnEditOk(row) {
+      // console.log(row.editRow)
+      if (row.editRow.name && row.editRow.description) {
+        await updateRole({ ...row.editRow, id: row.id })
+        this.$message.success('修改成功')
+        Object.assign(row, {
+          ...row.editRow,
+          isEdit: false
+        })
+      } else {
+        this.$message.error('角色名称和角色描述不能为空')
+      }
     }
   }
 }
