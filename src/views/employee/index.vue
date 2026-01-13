@@ -5,11 +5,14 @@
         <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
         <el-tree
+          ref="deptTree"
+          node-key="id"
           :data="depts"
           :props="defaultProps"
           :highlight-current="true"
           :default-expand-all="true"
           :expand-on-click-node="false"
+          @current-change="selectNode"
         />
       </div>
       <div class="right">
@@ -36,6 +39,10 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name'
+      },
+      // 储存查询参数
+      queryParams: {
+        departmentId: null
       }
     }
   },
@@ -46,6 +53,16 @@ export default {
     async getDepartment() {
       const res = await getDepartment()
       this.depts = transListToTreeData(res, 0)
+      // console.log(this.depts[0])
+      this.queryParams.departmentId = this.depts[0].id
+      // 等待树形组件渲染完成后，设置当前选中节点
+      this.$nextTick(() => {
+        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
+      })
+    },
+    selectNode(node) {
+      // console.log(node)
+      this.queryParams.departmentId = node.id
     }
   }
 }
