@@ -32,6 +32,7 @@
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils/index'
 import AddDept from '@/views/department/components/add-dept.vue'
+import { deleteDepartment } from '@/api/department'
 export default {
   name: 'Department',
   components: {
@@ -65,6 +66,17 @@ export default {
         this.currentNodeId = id
         this.$nextTick(() => {
           this.$refs.addDept.getDepartmentDetail()
+        })
+      } else {
+        // 删除部门
+        this.$confirm('你确定要删除该部门吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          await deleteDepartment(id)
+          this.$message.success('删除成功')
+          this.getDepartment()
         })
       }
     }
