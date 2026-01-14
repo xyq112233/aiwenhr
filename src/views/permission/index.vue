@@ -26,7 +26,7 @@
           <el-input v-model="formData.code" style="width:90%" />
         </el-form-item>
         <el-form-item label="权限描述">
-          <el-input v-model="formData.description" style="width:90%" />
+          <el-input v-model="formData.description" style="width:90%" type="textarea" rows="3" />
         </el-form-item>
         <el-form-item label="开启">
           <el-switch
@@ -64,8 +64,7 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '权限名称不能为空', trigger: 'blur' }],
-        code: [{ required: true, message: '权限标识不能为空', trigger: 'blur' }],
-        description: [{ required: true, message: '权限描述不能为空', trigger: 'blur' }]
+        code: [{ required: true, message: '权限标识不能为空', trigger: 'blur' }]
       }
     }
   },

@@ -59,3 +59,17 @@ export function updateEmployee(data) {
     data
   })
 }
+// 获取角色
+export function getEnableRoleList() {
+  return request({
+    url: '/sys/role/list/enabled'
+  })
+}
+// 分配角色
+export function assignRole(data) {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'put',
+    data
+  })
+}
