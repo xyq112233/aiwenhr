@@ -41,6 +41,7 @@ export default {
       this.treeData = data
     },
     changeValue(list) {
+      // console.log(list)
       if (list.length > 0) {
         this.$emit('input', list[list.length - 1])
       } else {
