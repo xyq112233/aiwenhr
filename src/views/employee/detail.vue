@@ -100,7 +100,7 @@
 
 <script>
 import SelectTree from '@/views/employee/components/select-tree.vue'
-import { addEmployee } from '@/api/employee'
+import { addEmployee, getEmployeeDetail } from '@/api/employee'
 export default {
   components: {
     SelectTree
@@ -144,6 +144,12 @@ export default {
 
     }
   },
+  created() {
+    // console.log(this.$route.params.id)
+    if (this.$route.params.id) {
+      this.getEmployeeDetail()
+    }
+  },
   methods: {
     saveData() {
       this.$refs.userForm.validate(async isOk => {
@@ -153,6 +159,10 @@ export default {
           this.$router.push('/employee')
         }
       })
+    },
+    async getEmployeeDetail() {
+      const res = await getEmployeeDetail(this.$route.params.id)
+      this.userInfo = res
     }
   }
 }

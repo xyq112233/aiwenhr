@@ -51,7 +51,7 @@
           <el-table-column prop="timeOfEntry" label="入职时间" sortable />
           <el-table-column label="操作">
             <template v-slot="{row}">
-              <el-button size="mini" type="text">查看</el-button>
+              <el-button size="mini" type="text" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button>
               <el-button size="mini" type="text">角色</el-button>
               <el-popconfirm title="确定删除这一行数据吗？" @onConfirm="confirDel(row.id)">
                 <el-button slot="reference" size="mini" style="margin-left: 10px;" type="text">删除</el-button>
