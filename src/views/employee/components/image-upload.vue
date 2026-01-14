@@ -4,6 +4,7 @@
     action=""
     :show-file-list="false"
     :before-upload="beforeAvatarUpload"
+    :http-request="uploadImage"
   >
     <img v-if="value" :src="value" class="avatar">
     <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -11,6 +12,7 @@
 </template>
 
 <script>
+import COS from 'cos-js-sdk-v5'
 export default {
   props: {
     value: {
@@ -30,11 +32,31 @@ export default {
         this.$message.error('上传头像图片大小不能超过 5MB!')
       }
       return isJPG && isLt2M
+    },
+    uploadImage(params) {
+      // console.log(params.file)
+      const cos = new COS({
+        SecretId: 'AKIDBQWSEqMhrtmXAuZ6VisulR9nKiwxukPt',
+        SecretKey: 'MWWM1TjrsiT2PbeVAduzsa6Pab9ar34t'
+      })// 实例化cos对象
+      cos.putObject({
+        Bucket: 'aiwen-1395745621', // 存储桶名称
+        Region: 'ap-beijing', // 存储桶所在地域
+        Key: params.file.name,
+        StorageClass: 'STANDARD',
+        Body: params.file
+      }, (err, data) => {
+        // console.log(err, data)
+        if (data.statusCode === 200 && data.Location) {
+          this.$emit('input', 'https://' + data.Location)
+        } else {
+          this.$message.error(err.Message)
+        }
+      })
     }
   }
 }
 </script>
-
 <style>
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
