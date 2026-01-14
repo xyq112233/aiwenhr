@@ -46,6 +46,7 @@ export default {
       FileSaver.saveAs(res, '员工导入模板.xlsx')
     },
     handlUpload() {
+      // 点击上传按钮，模拟点击文件选择框
       this.$refs['excel-upload-input'].click()
     },
     async uploadChange(e) {
