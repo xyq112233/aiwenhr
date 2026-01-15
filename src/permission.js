@@ -16,13 +16,14 @@ router.beforeEach(async(to, from, next) => {
       if (!store.getters.userId) {
         const { roles } = await store.dispatch('user/getUserInfo')
         // console.log(roles)
-        // console.log(rloes.menus)
+        // console.log(roles.menus)
         // console.log(asyncRoutes)
         const filterRoutes = asyncRoutes.filter(item => {
           // console.log(item.name)
           return roles.menus.includes(item.name)
         })
         // console.log(filterRoutes)
+        store.commit('user/setRoutes', filterRoutes)
         router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }])// 添加动态路由到路由表
         next(to.path)
       } else {

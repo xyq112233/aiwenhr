@@ -4,6 +4,7 @@ const getters = {
   token: state => state.user.token,
   userId: state => state.user.userInfo.userId,
   avatar: state => state.user.userInfo.staffPhoto, // 用户头像
-  name: state => state.user.userInfo.username// 用户名称
+  name: state => state.user.userInfo.username, // 用户名称
+  routes: state => state.user.routes// 动态路由
 }
 export default getters
