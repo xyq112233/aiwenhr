@@ -9,7 +9,7 @@
         <div class="avatar-wrapper">
           <!-- 头像 -->
           <img v-if="avatar" :src="avatar" class="user-avatar">
-          <span v-else class="username">{{ name?.charAt(0) }}</span>
+          <span v-else class="username">{{ name?.charAt(2) }}</span>
           <!-- 用户名 -->
           <span class="name">{{ name }}</span>
           <!-- 图标 -->

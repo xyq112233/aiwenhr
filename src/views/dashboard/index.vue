@@ -7,10 +7,10 @@
           <!-- 个人信息 -->
           <div class="user-info">
             <img v-if="avatar" class="avatar" :src="avatar" alt="">
-            <span v-else class="username">{{ name?.charAt(0) }}</span>
+            <span v-else class="username">{{ name?.charAt(2) }}</span>
             <div class="company-info">
               <div class="title">
-                江苏传智播客教育科技股份有限公司
+                aiwen传智播客教育科技股份有限公司
                 <span>体验版</span>
               </div>
               <div class="depart">{{ name }} ｜ {{ company }}-{{ departmentName }}</div>
@@ -147,6 +147,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="social" style=" width: 100%; height: 100%;" />
             </div>
           </div>
         </div>
@@ -192,6 +193,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="provident" style=" width: 100%; height: 100%;" />
             </div>
           </div>
         </div>
@@ -254,6 +256,7 @@
 import CountTo from 'vue-count-to'
 import { mapGetters } from 'vuex'
 import { getHomeData, getMessageList } from '@/api/home'
+import * as echarts from 'echarts' // 引入所有的echarts
 export default {
   components: {
     CountTo
@@ -268,9 +271,63 @@ export default {
   computed: {
     ...mapGetters(['name', 'avatar', 'company', 'departmentName']) // 映射给了计算属性
   },
+  watch: {
+    homeData() {
+      // console.log(this.homeData)
+      this.social.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.homeData.socialInsurance?.xAxis || []
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: this.homeData.socialInsurance?.yAxis || [],
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be'// 区域颜色
+            },
+            lineStyle: {
+              color: '#04c9be'// 线颜色
+            }
+          }
+        ]
+      })
+      this.provident.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.homeData.providentFund?.xAxis || []
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: this.homeData.providentFund?.yAxis || [],
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be'// 区域颜色
+            },
+            lineStyle: {
+              color: '#04c9be'// 线颜色
+            }
+          }
+        ]
+      })
+    }
+  },
   created() {
     this.getHomeData()
     this.getMessageList()
+  },
+  mounted() {
+    // console.log(this.$refs.social)
+    this.social = echarts.init(this.$refs.social)
+    this.provident = echarts.init(this.$refs.provident)
   },
   methods: {
     async getHomeData() {
