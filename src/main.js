@@ -35,6 +35,19 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 注册自定义指令，控制功能权限
+Vue.directive('permission', {
+  inserted(el, binding) {
+    // console.log(el)// 指令绑定的元素
+    // console.log(binding)// 指令绑定的信息对象
+    const points = store.state.user.userInfo?.roles?.points || []
+    if (!points.includes(binding.value)) {
+      el.remove()// 移除元素
+    // el.disabled = true// 禁用元素
+    }
+  }
+})
+
 new Vue({
   el: '#app',
   router,
