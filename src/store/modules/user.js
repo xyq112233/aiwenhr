@@ -2,6 +2,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
 import { getUserInfo } from '@/api/user'
 import { constantRoutes } from '@/router'
+import { resetRouter } from '@/router'
 const state = {
   token: getToken(), // 从缓存中读取初始值
   userInfo: {},
@@ -39,6 +40,7 @@ const actions = {
   logout(context) {
     context.commit('removeToken')
     context.commit('setUserInfo', {})
+    resetRouter()// 重置路由
   }
 }
 
