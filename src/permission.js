@@ -2,6 +2,7 @@ import router from '@/router'
 import nProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from '@/store'
+import { asyncRoutes } from '@/router'
 
 // 路由前置守卫
 const whiteList = ['/login', '/404']
@@ -13,9 +14,20 @@ router.beforeEach(async(to, from, next) => {
       nProgress.done()
     } else {
       if (!store.getters.userId) {
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // console.log(roles)
+        // console.log(rloes.menus)
+        // console.log(asyncRoutes)
+        const filterRoutes = asyncRoutes.filter(item => {
+          // console.log(item.name)
+          return roles.menus.includes(item.name)
+        })
+        // console.log(filterRoutes)
+        router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }])// 添加动态路由到路由表
+        next(to.path)
+      } else {
+        next()
       }
-      next()
     }
   } else {
     if (whiteList.includes(to.path)) {
