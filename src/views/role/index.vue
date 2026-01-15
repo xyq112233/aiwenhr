@@ -32,7 +32,7 @@
               <el-button size="mini" @click="row.isEdit = false">取消</el-button>
             </template>
             <template v-else>
-              <el-button size="mini" type="text">权限分配</el-button>
+              <el-button size="mini" type="text" @click="btnPermission">权限分配</el-button>
               <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
               <el-popconfirm title="这是一段内容确定删除吗？" @onConfirm="confirDel(row.id)">
                 <el-button slot="reference" style="margin-left: 10px;" size="mini" type="text">删除</el-button>
@@ -74,16 +74,26 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <!-- 放置权限弹层 -->
+    <el-dialog title="权限分配" :visible.sync="showPermissionDialog">
+      <!-- 放置数据 -->
+      <el-tree :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" />
+    </el-dialog>
   </div>
 </template>
 <script>
 import { getRoleList, addRole, updateRole, deleteRole } from '@/api/role'
+import { getPermissionList } from '@/api/permission'
+import { transListToTreeData } from '@/utils'
 export default {
   name: 'Role',
   data() {
     return {
       showDialog: false,
+      showPermissionDialog: false, // 权限分配弹层是否显示
       roleList: [],
+      permissionData: [], // 权限分配数据
       // 将分页信息放置在一个对象中
       pageParams: {
         page: 1,
@@ -168,6 +178,12 @@ export default {
       this.$message.success('删除成功')
       if (this.roleList.length === 1) this.pageParams.page--
       this.getRoleList()
+    },
+    async btnPermission() {
+      this.showPermissionDialog = true
+      const res = await getPermissionList()
+      this.permissionData = res
+      this.permissionData = transListToTreeData(res, 0)
     }
   }
 }
