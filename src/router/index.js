@@ -5,14 +5,14 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import department from './modules/department'
-import approval from './modules/approval'
-import attendance from './modules/attendance'
-import employee from './modules/employee'
-import permission from './modules/permission'
-import role from './modules/role'
-import salary from './modules/salary'
-import social from './modules/social'
+import departmentRouter from './modules/department'
+import approvalRouter from './modules/approval'
+import attendanceRouter from './modules/attendance'
+import employeeRouter from './modules/employee'
+import permissionRouter from './modules/permission'
+import roleRouter from './modules/role'
+import salaryRouter from './modules/salary'
+import socialRouter from './modules/social'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -64,21 +64,22 @@ export const constantRoutes = [
   }
 
   // 404 page must be placed at the end !!!
+
 ]
+// 动态路由
 export const asyncRoutes = [
-  department,
-  role,
-  employee,
-  permission,
-  attendance,
-  approval,
-  salary,
-  social
-]
+  departmentRouter,
+  roleRouter,
+  employeeRouter,
+  permissionRouter,
+  attendanceRouter,
+  approvalRouter,
+  salaryRouter,
+  socialRouter]
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRoutes // 默认引入静态路由
 })
 
 const router = createRouter()

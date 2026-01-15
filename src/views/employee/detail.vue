@@ -27,9 +27,9 @@
               <el-form-item label="手机" prop="mobile">
                 <el-input
                   v-model="userInfo.mobile"
+                  :disabled="!!$route.params.id"
                   size="mini"
                   class="inputW"
-                  :disabled="!!$route.params.id"
                 />
               </el-form-item>
             </el-col>
@@ -38,8 +38,8 @@
             <el-col :span="12">
               <el-form-item label="部门" prop="departmentId">
                 <!-- 放置及联部门组件 会单独封装-->
-                <SelectTree v-model="userInfo.departmentId" class="inputW" />
-
+                <!-- inputW样式会给到selectTree中 template第一层的组件 -->
+                <select-tree v-model="userInfo.departmentId" class="inputW" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -83,7 +83,7 @@
             <el-col :span="12">
               <el-form-item label="员工头像">
                 <!-- 放置上传图片 -->
-                <ImageUpload v-model="userInfo.staffPhoto" />
+                <image-upload v-model="userInfo.staffPhoto" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -101,14 +101,11 @@
 </template>
 
 <script>
-import SelectTree from '@/views/employee/components/select-tree.vue'
+import SelectTree from './components/select-tree.vue'
+import ImageUpload from './components/image-upload.vue'
 import { addEmployee, getEmployeeDetail, updateEmployee } from '@/api/employee'
-import ImageUpload from '@/views/employee/components/image-upload.vue'
 export default {
-  components: {
-    SelectTree,
-    ImageUpload
-  },
+  components: { SelectTree, ImageUpload },
   data() {
     return {
       userInfo: {
@@ -119,7 +116,7 @@ export default {
         departmentId: null, // 部门id
         timeOfEntry: '', // 入职时间
         correctionTime: '', // 转正时间
-        staffPhoto: '' // 员工照片
+        staffPhoto: ''
       },
       rules: {
         username: [{ required: true, message: '请输入姓名', trigger: 'blur' }, {
@@ -150,45 +147,44 @@ export default {
     }
   },
   created() {
-    // console.log(this.$route.params.id)
-    if (this.$route.params.id) {
-      this.getEmployeeDetail()
-    }
+    // 如何获取路由参数的中id
+    // if (this.$route.params.id) { this.getEmployeeDetail() }
+    this.$route.params.id && this.getEmployeeDetail()
   },
   methods: {
+    async getEmployeeDetail() {
+      this.userInfo = await getEmployeeDetail(this.$route.params.id)
+    },
     saveData() {
-      this.$refs.userForm.validate(async isOk => {
-        if (isOk) {
-          // 判断是否为编辑模式
+      this.$refs.userForm.validate(async isOK => {
+        if (isOK) {
+          // 编辑模式
           if (this.$route.params.id) {
             // 编辑模式
             await updateEmployee(this.userInfo)
-            this.$message.success('更新成功')
+            this.$message.success('更新员工成功')
           } else {
             // 新增模式
+            // 校验通过
             await addEmployee(this.userInfo)
-            this.$message.success('新增成功')
+            this.$message.success('新增员工成功')
           }
-
           this.$router.push('/employee')
         }
       })
-    },
-    async getEmployeeDetail() {
-      const res = await getEmployeeDetail(this.$route.params.id)
-      this.userInfo = res
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-    .edit-form {
-      background: #fff;
-      padding: 20px;
-      .inputW {
-        width: 380px
-      }
+  <style scoped lang="scss">
+  .edit-form {
+    background: #fff;
+    padding: 20px;
+    .inputW {
+      width: 380px
     }
+  }
 
-</style>
+  </style>
+
