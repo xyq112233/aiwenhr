@@ -2,6 +2,11 @@ import axios from 'axios'
 import store from '@/store'
 import { Message } from 'element-ui'
 import router from '@/router'
+
+console.log('=== 配置检查 ===')
+console.log('环境:', process.env.NODE_ENV)
+console.log('API配置:', process.env.VUE_APP_BASE_API)
+console.log('请求实例配置:')
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 20000
