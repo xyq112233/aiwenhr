@@ -5,7 +5,7 @@ import router from '@/router'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 20000
+  timeout: 50000
 })
 
 const whiteList = ['/sys/login', '/sys/captcha']// 登录 / 验证码接口不带 token
