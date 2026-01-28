@@ -8,11 +8,15 @@ const service = axios.create({
   timeout: 20000
 })
 
+const whiteList = ['/sys/login', '/sys/captcha']// 登录 / 验证码接口不带 token
 // 添加请求拦截器
 service.interceptors.request.use(function(config) {
   // 在发送请求之前做些什么
-  if (store.getters.token) {
-    config.headers.Authorization = `Bearer ${store.getters.token}`
+  const token = store.getters.token
+
+  // 登录 / 验证码接口不带 token
+  if (token && !whiteList.some(url => config.url.includes(url))) {
+    config.headers.Authorization = `Bearer ${token}`
   }
   return config
 }, function(error) {
